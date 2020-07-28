@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: tkiwiber <alex_orlov@goodiez.app>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/07/15 18:58:51 by dlucio            #+#    #+#             */
-/*   Updated: 2020/07/27 23:44:53 by tkiwiber         ###   ########.fr       */
+/*   Created: 2020/07/28 23:16:26 by tkiwiber          #+#    #+#             */
+/*   Updated: 2020/07/28 23:17:14 by tkiwiber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,8 @@
 #  define BUFFER_SIZE 32
 # endif
 
-# include <stdio.h>
-# include <fcntl.h>
 # include <stdlib.h>
 # include <unistd.h>
-# include <errno.h>
 
 int		get_next_line(int fd, char **line);
 void	ft_strclr(char *s);

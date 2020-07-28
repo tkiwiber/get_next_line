@@ -5,32 +5,36 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: tkiwiber <alex_orlov@goodiez.app>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/07/15 18:58:23 by dlucio            #+#    #+#             */
-/*   Updated: 2020/07/27 23:46:32 by tkiwiber         ###   ########.fr       */
+/*   Created: 2020/07/28 23:16:01 by tkiwiber          #+#    #+#             */
+/*   Updated: 2020/07/28 23:43:50 by tkiwiber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-void			ft_strclr(char *s)
+size_t		ft_strlen(const char *str)
 {
-	if (s)
-		while (*s)
-			*s++ = '\0';
-}
-
-char			*ft_strcpy(char *dest, char *src)
-{
-	int			i;
+	size_t	i;
 
 	i = 0;
-	while (src[i] != '\0')
+	if (str)
+		while (str[i] != 0)
+			i++;
+	return (i);
+}
+
+char		*ft_strdup(const char *s1, int *err)
+{
+	char	*str;
+
+	str = (void *)malloc(sizeof(char) * (ft_strlen(s1) + 1));
+	if (str == NULL)
 	{
-		dest[i] = src[i];
-		i++;
+		*err = -1;
+		return (NULL);
 	}
-	dest[i] = '\0';
-	return (dest);
+	ft_strlcpy(str, s1, ft_strlen(s1) + 1);
+	return (str);
 }
 
 char			*ft_strchr(const char *s, int c)
