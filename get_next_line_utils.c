@@ -6,13 +6,42 @@
 /*   By: tkiwiber <alex_orlov@goodiez.app>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/28 23:16:46 by tkiwiber          #+#    #+#             */
-/*   Updated: 2020/07/28 23:18:17 by tkiwiber         ###   ########.fr       */
+/*   Updated: 2020/07/29 22:37:07 by tkiwiber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char		*ft_strjoin(char *s1, char *s2, int *err)
+size_t		ft_strlen(const char *str)
+{
+	size_t	i;
+
+	i = 0;
+	if (str)
+		while (str[i] != 0)
+			i++;
+	return (i);
+}
+
+char		*ft_strdup(const char *str)
+{
+	char	*new;
+	int		i;
+
+	i = 0;
+	new = (char*)malloc(sizeof(char) * (ft_strlen(str) + 1));
+	if (new == NULL)
+		return (NULL);
+	while (str[i] != '\0')
+	{
+		new[i] = str[i];
+		i++;
+	}
+	new[i] = '\0';
+	return (new);
+}
+
+char		*ft_strjoin(char *s1, char *s2)
 {
 	char	*str;
 	size_t	i;
@@ -25,10 +54,7 @@ char		*ft_strjoin(char *s1, char *s2, int *err)
 	s1l = ft_strlen(s1);
 	s2l = ft_strlen(s2);
 	if (!(str = (char *)malloc(sizeof(char) * (s1l + s2l + 1))))
-	{
-		*err = -1;
 		return (NULL);
-	}
 	i = -1;
 	j = 0;
 	while (++i < (s1l + s2l))
@@ -40,16 +66,26 @@ char		*ft_strjoin(char *s1, char *s2, int *err)
 	return (str);
 }
 
-void			ft_strclr(char *s)
+char		*ft_strchr(const char *s, int c)
 {
-	if (s)
-		while (*s)
-			*s++ = '\0';
+	char	*str_p;
+
+	str_p = (char *)s;
+	while (*str_p != '\0')
+	{
+		if (*str_p == (unsigned char)c)
+			return (str_p);
+		str_p++;
+	}
+	if (*str_p == (unsigned char)c)
+		return (str_p);
+	else
+		return (NULL);
 }
 
-char			*ft_strcpy(char *dest, char *src)
+char		*ft_strcpy(char *dest, char *src)
 {
-	int			i;
+	int		i;
 
 	i = 0;
 	while (src[i] != '\0')
@@ -59,35 +95,4 @@ char			*ft_strcpy(char *dest, char *src)
 	}
 	dest[i] = '\0';
 	return (dest);
-}
-
-size_t		ft_strlcpy(char *dest, const char *src, size_t destsize)
-{
-	size_t	i;
-
-	if (destsize <= 0)
-		return (ft_strlen(src));
-	i = 0;
-	while (src[i] && i < destsize - 1)
-	{
-		dest[i] = src[i];
-		i++;
-	}
-	dest[i] = '\0';
-	return (ft_strlen(src));
-}
-
-char		*ft_strnew(size_t size, int *err)
-{
-	char	*str;
-
-	if (!(str = (char *)malloc(sizeof(char) * (size + 1))))
-	{
-		*err = -1;
-		return (NULL);
-	}
-	str[size] = '\0';
-	while (size--)
-		str[size] = '\0';
-	return (str);
 }

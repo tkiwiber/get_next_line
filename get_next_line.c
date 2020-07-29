@@ -6,106 +6,97 @@
 /*   By: tkiwiber <alex_orlov@goodiez.app>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/28 23:16:01 by tkiwiber          #+#    #+#             */
-/*   Updated: 2020/07/28 23:43:50 by tkiwiber         ###   ########.fr       */
+/*   Updated: 2020/07/29 22:34:26 by tkiwiber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-size_t		ft_strlen(const char *str)
+void			ft_strclr(char *s)
 {
-	size_t	i;
-
-	i = 0;
-	if (str)
-		while (str[i] != 0)
-			i++;
-	return (i);
+	if (s)
+		while (*s)
+			*s++ = '\0';
 }
 
-char		*ft_strdup(const char *s1, int *err)
+int				free_str(char **s1, char **s2)
 {
-	char	*str;
-
-	str = (void *)malloc(sizeof(char) * (ft_strlen(s1) + 1));
-	if (str == NULL)
+	if (*s1)
 	{
-		*err = -1;
-		return (NULL);
+		free(*s1);
+		*s1 = NULL;
 	}
-	ft_strlcpy(str, s1, ft_strlen(s1) + 1);
-	return (str);
-}
-
-char			*ft_strchr(const char *s, int c)
-{
-	char		*str_p;
-
-	str_p = (char *)s;
-	while (*str_p != '\0')
+	if (*s2)
 	{
-		if (*str_p == (unsigned char)c)
-			return (str_p);
-		str_p++;
+		free(*s2);
+		*s2 = NULL;
 	}
-	if (*str_p == (unsigned char)c)
-		return (str_p);
-	else
-		return (NULL);
+	return (-1);
 }
 
-char			*fill_line(char *residue, char **line, int *err)
+char			*fill_line(char *residue, char **line)
 {
 	char		*p_n;
 
-	*err = 1;
-	if (!(line))
-		*err = -1;
 	p_n = NULL;
 	if (residue)
 	{
 		if ((p_n = ft_strchr(residue, '\n')))
 		{
 			*p_n = '\0';
-			*line = ft_strdup(residue, err);
-			ft_strcpy(residue, ++p_n);
+			*line = ft_strdup(residue);
+			p_n++;
+			ft_strcpy(residue, p_n);
 		}
 		else
 		{
-			*line = ft_strdup(residue, err);
+			*line = ft_strdup(residue);
 			ft_strclr(residue);
 		}
 	}
-	else if (*err != -1)
-		*line = ft_strnew(1, err);
+	else
+		*line = ft_strdup("");
 	return (p_n);
+}
+
+void			trunc_line(char **line, char **residue, char **p_n, char **buf)
+{
+	char		*tmp;
+
+	if ((*p_n = ft_strchr(*buf, '\n')))
+	{
+		**p_n = '\0';
+		(*p_n)++;
+		free(*residue);
+		*residue = ft_strdup(*p_n);
+	}
+	tmp = *line;
+	*line = ft_strjoin(*line, *buf);
+	free(tmp);
 }
 
 int				get_next_line(int fd, char **line)
 {
-	char		buf[BUFFER_SIZE + 1];
+	char		*buf;
 	static char	*residue;
 	char		*p_n;
-	char		*tmp;
-	int			err;
+	int			bwr;
 
-	if ((read(fd, NULL, 0) == -1) || (!line) || (BUFFER_SIZE < 1))
+	if (read(fd, NULL, 0) < 0 || !line || BUFFER_SIZE < 1)
 		return (-1);
-	p_n = fill_line(residue, line, &err);
-	while (!p_n && err != -1 && (err = read(fd, buf, BUFFER_SIZE)) > 0)
+	bwr = 1;
+	p_n = fill_line(residue, line);
+	if (!(buf = malloc(sizeof(char) * (BUFFER_SIZE + 1))))
+		return (free_str(&buf, line));
+	while (!p_n && (bwr = read(fd, buf, BUFFER_SIZE)) > 0)
 	{
-		buf[err] = '\0';
-		if ((p_n = ft_strchr(buf, '\n')))
-		{
-			*p_n++ = '\0';
-			free(residue);
-			residue = ft_strdup(p_n, &err);
-		}
-		tmp = *line;
-		*line = ft_strjoin(*line, buf, &err);
-		free(tmp);
+		if (bwr < 0)
+			return (free_str(&buf, &residue));
+		buf[bwr] = '\0';
+		trunc_line(line, &residue, &p_n, &buf);
 	}
-	if (err == -1)
-		return (-1);
-	return ((ft_strlen(residue) || err) ? 1 : 0);
+	free(buf);
+	if (bwr == 0 && residue != 0)
+		free_str(&residue, &residue);
+	return ((p_n || bwr) ? 1 : 0);
 }
