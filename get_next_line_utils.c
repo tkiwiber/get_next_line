@@ -6,7 +6,7 @@
 /*   By: tkiwiber <alex_orlov@goodiez.app>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/28 23:16:46 by tkiwiber          #+#    #+#             */
-/*   Updated: 2020/07/29 22:37:07 by tkiwiber         ###   ########.fr       */
+/*   Updated: 2020/07/31 12:42:55 by tkiwiber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ size_t		ft_strlen(const char *str)
 	return (i);
 }
 
-char		*ft_strdup(const char *str)
+char		*ft_strdup(const char *str, int *err)
 {
 	char	*new;
 	int		i;
@@ -31,7 +31,10 @@ char		*ft_strdup(const char *str)
 	i = 0;
 	new = (char*)malloc(sizeof(char) * (ft_strlen(str) + 1));
 	if (new == NULL)
+	{
+		*err = -1;
 		return (NULL);
+	}
 	while (str[i] != '\0')
 	{
 		new[i] = str[i];
@@ -41,7 +44,7 @@ char		*ft_strdup(const char *str)
 	return (new);
 }
 
-char		*ft_strjoin(char *s1, char *s2)
+char		*ft_strjoin(char *s1, char *s2, int *err)
 {
 	char	*str;
 	size_t	i;
@@ -54,7 +57,10 @@ char		*ft_strjoin(char *s1, char *s2)
 	s1l = ft_strlen(s1);
 	s2l = ft_strlen(s2);
 	if (!(str = (char *)malloc(sizeof(char) * (s1l + s2l + 1))))
+	{
+		*err = -1;
 		return (NULL);
+	}
 	i = -1;
 	j = 0;
 	while (++i < (s1l + s2l))
